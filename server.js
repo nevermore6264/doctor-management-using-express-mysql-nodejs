@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // api routes
-app.use('/api/doctor', require('./doctor/controller/doctor.controller'));
+app.use('/api/doctor', require('./controller/doctor.controller'));
 
 // global error handler
 app.use(errorHandler);

@@ -23,7 +23,7 @@ async function initialize() {
   });
 
   // init models and add them to the exported db object
-  db.Doctor = require("../doctor/entity/doctor.entity")(sequelize);
+  db.Doctor = require("../model/doctor.model")(sequelize);
 
   // sync all models with database
   await sequelize.sync({ alter: true });
