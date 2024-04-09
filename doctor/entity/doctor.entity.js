@@ -15,5 +15,5 @@ function model(sequelize) {
     const options = {
     };
 
-    return sequelize.define('User', attributes, options);
+    return sequelize.define('Doctor', attributes, options);
 }
