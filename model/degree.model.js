@@ -20,5 +20,12 @@ module.exports = function (sequelize) {
     }
   );
 
+  Degree.associate = (models) => {
+    Degree.belongsToMany(models.Doctor, {
+      through: "DoctorDegree",
+      foreignKey: "degree_id",
+    });
+  };
+
   return Degree;
 };

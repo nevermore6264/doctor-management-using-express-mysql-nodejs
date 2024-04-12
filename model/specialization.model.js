@@ -20,5 +20,12 @@ module.exports = function (sequelize) {
     }
   );
 
+  Specialization.associate = (models) => {
+    Specialization.belongsToMany(models.Doctor, {
+      through: "DoctorSpecialization",
+      foreignKey: "specialization_id",
+    });
+  };
+
   return Specialization;
 };

@@ -32,5 +32,18 @@ module.exports = function (sequelize) {
     }
   );
 
+  // Define associations
+  Doctor.associate = (models) => {
+    // Define associations here
+    Doctor.belongsToMany(models.Degree, {
+      through: "DoctorDegree",
+      foreignKey: "doctor_id",
+    });
+    Doctor.belongsToMany(models.Specialization, {
+      through: "DoctorSpecialization",
+      foreignKey: "doctor_id",
+    });
+  };
+
   return Doctor;
 };

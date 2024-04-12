@@ -23,6 +23,13 @@ async function initialize() {
     dialect: "mysql",
   });
 
+  
+  // Add sequelize and query method to db object
+  db.sequelize = sequelize;
+  db.query = async (sql, options) => {
+    return await sequelize.query(sql, options);
+  };
+
   // init models and add them to the exported db object
   const defineDoctorModel = require('../model/doctor.model');
   const defineDegreeModel = require('../model/degree.model');
