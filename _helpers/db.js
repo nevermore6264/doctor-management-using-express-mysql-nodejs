@@ -2,7 +2,8 @@ const config = require("config.json");
 const mysql = require("mysql2/promise");
 const { Sequelize } = require("sequelize");
 
-module.exports = db = {};
+// Initialize an empty object to store models
+const db = {};
 
 initialize();
 
@@ -23,8 +24,22 @@ async function initialize() {
   });
 
   // init models and add them to the exported db object
-  db.Doctor = require("../model/doctor.model")(sequelize);
+  const defineDoctorModel = require('../model/doctor.model');
+  const defineDegreeModel = require('../model/degree.model');
+  const defineDoctorDegreeModel = require('../model/doctorDegree.model');
+  const defineSpecializationModel = require('../model/specialization.model');
+  const defineDoctorSpecializationModel = require('../model/doctorSpecialization.model');
+
+  // Assign models to the db object
+  db.Doctor = defineDoctorModel(sequelize);
+  db.Degree = defineDegreeModel(sequelize);
+  db.DoctorDegree = defineDoctorDegreeModel(sequelize);
+  db.Specialization = defineSpecializationModel(sequelize);
+  db.DoctorSpecialization = defineDoctorSpecializationModel(sequelize);
 
   // sync all models with database
   await sequelize.sync({ alter: true });
+
+  // Export the db object with models
+  module.exports = db;
 }
