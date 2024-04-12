@@ -3,7 +3,7 @@ const mysql = require("mysql2/promise");
 const { Sequelize } = require("sequelize");
 
 // Initialize an empty object to store models
-const db = {};
+module.exports = db = {};
 
 initialize();
 
@@ -40,6 +40,4 @@ async function initialize() {
   // sync all models with database
   await sequelize.sync({ alter: true });
 
-  // Export the db object with models
-  module.exports = db;
 }
