@@ -26,7 +26,7 @@ async function getAll() {
   return results;
 }
 
-async function search(searchParams, page, pageSize) {
+async function search(fullName, page, pageSize, sortBy, sortOrder) {
   // Xây dựng câu truy vấn cơ sở dữ liệu dựa trên các tham số tìm kiếm và phân trang
   let query = `
       SELECT d.doctor_id, d.full_name, d.experience_years, d.work_location,
@@ -45,7 +45,7 @@ async function search(searchParams, page, pageSize) {
   // Xây dựng điều kiện tìm kiếm nếu có
   if (fullName) {
     whereClause.push(`d.full_name LIKE :fullName`);
-    queryParams.fullName = `%${searchParams.fullName}%`;
+    queryParams.fullName = `%${fullName}%`;
   }
 
   // Nếu có điều kiện tìm kiếm, thêm vào truy vấn
@@ -64,13 +64,19 @@ async function search(searchParams, page, pageSize) {
     queryParams.offset = parseInt(offset);
   }
 
+  // Thêm thông tin sắp xếp nếu được chỉ định
+  // Thêm thông tin sắp xếp nếu được chỉ định và nếu có ít nhất một điều kiện trong WHERE clause
+  if (whereClause.length > 0 && sortBy && sortOrder) {
+    query += ` ORDER BY d.full_name ASC`;
+  }
+
   // Thực thi truy vấn
   const [results] = await db.query(query, {
     replacements: queryParams,
     type: db.sequelize.QueryTypes.SELECT,
   });
 
-  return Array.isArray(results) ? results : [results];
+  return results != null ? [results] : [];
 }
 
 async function getById(id) {
