@@ -76,7 +76,21 @@ async function search(fullName, page, pageSize, sortBy, sortOrder) {
     type: db.sequelize.QueryTypes.SELECT,
   });
 
-  return results != null ? [results] : [];
+  const content = [results];
+  const totalElements = content.length;
+  const totalPages = totalElements > 0 ? 1 : 0;
+  const last = totalPages === 0 || page >= totalPages;
+
+  return {
+    data: {
+      content,
+      pageIndex: page,
+      pageSize: pageSize,
+      totalElements,
+      totalPages,
+      last,
+    },
+  };
 }
 
 async function getById(id) {
