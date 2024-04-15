@@ -56,7 +56,6 @@ async function search(fullName, page, pageSize, sortBy, sortOrder) {
   // Thêm phần group by và sắp xếp kết quả
   query += ` GROUP BY d.doctor_id`;
 
-  // Thêm thông tin sắp xếp nếu được chỉ định
   // Thêm thông tin sắp xếp nếu được chỉ định và nếu có ít nhất một điều kiện trong WHERE clause
   if (whereClause.length > 0 && sortBy && sortOrder) {
     query += ` ORDER BY ${sortBy} ${sortOrder}`;
