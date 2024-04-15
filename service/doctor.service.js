@@ -43,12 +43,9 @@ async function search(searchParams, page, pageSize) {
   const queryParams = {};
 
   // Xây dựng điều kiện tìm kiếm nếu có
-  if (searchParams) {
-    if (searchParams.fullName) {
-      whereClause.push(`d.full_name LIKE :fullName`);
-      queryParams.fullName = `%${searchParams.fullName}%`;
-    }
-    // Thêm các điều kiện tìm kiếm khác nếu cần
+  if (fullName) {
+    whereClause.push(`d.full_name LIKE :fullName`);
+    queryParams.fullName = `%${searchParams.fullName}%`;
   }
 
   // Nếu có điều kiện tìm kiếm, thêm vào truy vấn
@@ -73,13 +70,7 @@ async function search(searchParams, page, pageSize) {
     type: db.sequelize.QueryTypes.SELECT,
   });
 
-  // Chia các giá trị degrees và specializations thành các mảng
-  results.forEach((result) => {
-    result.degrees = result.degrees.split(",");
-    result.specializations = result.specializations.split(",");
-  });
-
-  return results;
+  return Array.isArray(results) ? results : [results];
 }
 
 async function getById(id) {
