@@ -25,6 +25,56 @@ async function getAll() {
   return results;
 }
 
+async function search(searchParams, page, pageSize) {
+    // Xây dựng câu truy vấn cơ sở dữ liệu dựa trên các tham số tìm kiếm và phân trang
+    let query = `
+      SELECT d.doctor_id, d.full_name, d.experience_years, d.work_location,
+      GROUP_CONCAT(DISTINCT dg.degree_name) AS degree_name,
+      GROUP_CONCAT(DISTINCT s.specialization_name) AS specialization_name
+      FROM doctors d
+      LEFT JOIN doctordegrees dd ON d.doctor_id = dd.doctor_id
+      LEFT JOIN degrees dg ON dd.degree_id = dg.degree_id
+      LEFT JOIN doctorspecializations ds ON d.doctor_id = ds.doctor_id
+      LEFT JOIN specializations s ON ds.specialization_id = s.specialization_id
+    `;
+  
+    const whereClause = [];
+    const queryParams = {};
+  
+    // Xây dựng điều kiện tìm kiếm nếu có
+    if (searchParams) {
+      if (searchParams.full_name) {
+        whereClause.push(`d.full_name LIKE :fullName`);
+        queryParams.fullName = `%${searchParams.full_name}%`;
+      }
+      // Thêm các điều kiện tìm kiếm khác nếu cần
+    }
+  
+    // Nếu có điều kiện tìm kiếm, thêm vào truy vấn
+    if (whereClause.length > 0) {
+      query += ` WHERE ${whereClause.join(' AND ')}`;
+    }
+  
+    // Thêm phần group by và sắp xếp kết quả
+    query += ` GROUP BY d.doctor_id`;
+  
+    // Thực hiện phân trang
+    if (page && pageSize) {
+      const offset = (page - 1) * pageSize;
+      query += ` LIMIT :pageSize OFFSET :offset`;
+      queryParams.pageSize = parseInt(pageSize);
+      queryParams.offset = parseInt(offset);
+    }
+  
+    // Thực thi truy vấn
+    const [results] = await db.query(query, {
+      replacements: queryParams,
+      type: db.sequelize.QueryTypes.SELECT,
+    });
+  
+    return results;
+  }
+
 async function getById(id) {
   return await getDoctorById(id);
 }
