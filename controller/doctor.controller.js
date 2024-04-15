@@ -28,10 +28,10 @@ function searchDoctors(req, res, next) {
     console.log(req);
     // Lấy các tham số tìm kiếm, phân trang và sắp xếp từ query string
     const searchParams = req.body;
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
-    const sortBy = req.query.sortBy || 'full_name'; // Mặc định sắp xếp theo tên đầy đủ
-    const sortOrder = req.query.sortOrder || 'ASC'; // Mặc định sắp xếp tăng dần
+    const page = parseInt(req.body.page) || 1;
+    const pageSize = parseInt(req.body.pageSize) || 10;
+    const sortBy = req.body.sortBy || 'full_name'; // Mặc định sắp xếp theo tên đầy đủ
+    const sortOrder = req.body.sortOrder || 'ASC'; // Mặc định sắp xếp tăng dần
     
     doctorService.search(searchParams, page, pageSize, sortBy, sortOrder)
         .then(doctors => res.json(doctors))
