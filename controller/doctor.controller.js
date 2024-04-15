@@ -6,7 +6,7 @@ const doctorService = require('../service/doctor.service');
 
 router.get('/', getAll);
 router.get('/:id', getById);
-router.get('/search', searchDoctors);
+router.post('/search', searchDoctors);
 
 module.exports = router;
 
@@ -25,14 +25,15 @@ function getById(req, res, next) {
 }
 
 function searchDoctors(req, res, next) {
+    console.log(req);
     // Lấy các tham số tìm kiếm, phân trang và sắp xếp từ query string
-    const searchParams = req.query;
+    const searchParams = req.body;
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
     const sortBy = req.query.sortBy || 'full_name'; // Mặc định sắp xếp theo tên đầy đủ
     const sortOrder = req.query.sortOrder || 'ASC'; // Mặc định sắp xếp tăng dần
     
-    doctorService.getAll(searchParams, page, pageSize, sortBy, sortOrder)
+    doctorService.search(searchParams, page, pageSize, sortBy, sortOrder)
         .then(doctors => res.json(doctors))
         .catch(next);
 }

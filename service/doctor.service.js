@@ -3,6 +3,7 @@
 module.exports = {
   getAll,
   getById,
+  search
 };
 
 async function getAll() {
@@ -43,9 +44,9 @@ async function search(searchParams, page, pageSize) {
   
     // Xây dựng điều kiện tìm kiếm nếu có
     if (searchParams) {
-      if (searchParams.full_name) {
+      if (searchParams.fullName) {
         whereClause.push(`d.full_name LIKE :fullName`);
-        queryParams.fullName = `%${searchParams.full_name}%`;
+        queryParams.fullName = `%${searchParams.fullName}%`;
       }
       // Thêm các điều kiện tìm kiếm khác nếu cần
     }
