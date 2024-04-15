@@ -56,18 +56,18 @@ async function search(fullName, page, pageSize, sortBy, sortOrder) {
   // Thêm phần group by và sắp xếp kết quả
   query += ` GROUP BY d.doctor_id`;
 
+  // Thêm thông tin sắp xếp nếu được chỉ định
+  // Thêm thông tin sắp xếp nếu được chỉ định và nếu có ít nhất một điều kiện trong WHERE clause
+  if (whereClause.length > 0 && sortBy && sortOrder) {
+    query += ` ORDER BY ${sortBy} ${sortOrder}`;
+  }
+
   // Thực hiện phân trang
   if (page && pageSize) {
     const offset = (page - 1) * pageSize;
     query += ` LIMIT :pageSize OFFSET :offset`;
     queryParams.pageSize = parseInt(pageSize);
     queryParams.offset = parseInt(offset);
-  }
-
-  // Thêm thông tin sắp xếp nếu được chỉ định
-  // Thêm thông tin sắp xếp nếu được chỉ định và nếu có ít nhất một điều kiện trong WHERE clause
-  if (whereClause.length > 0 && sortBy && sortOrder) {
-    query += ` ORDER BY d.full_name ASC`;
   }
 
   // Thực thi truy vấn
