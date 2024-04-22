@@ -19,7 +19,7 @@ async function getAll() {
             GROUP BY d.doctor_id
         `;
 
-  const [results] = await db.query(query, {
+  const results = await db.query(query, {
     type: db.sequelize.QueryTypes.SELECT,
   });
 
