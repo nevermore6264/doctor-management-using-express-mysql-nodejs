@@ -1,30 +1,61 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require("puppeteer");
+const fs = require("fs");
+const { stringify } = require("csv-stringify");
 
 (async () => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  
-  await page.goto('https://www.vinmec.com/vi/danh-sach/bac-si/ca-nuoc/');
 
- // Chờ cho dữ liệu được tải hoàn thành
- await page.waitForSelector('#list > div > div > ul > li');
+  await page.goto("https://www.vinmec.com/vi/danh-sach/bac-si/ca-nuoc/");
 
- const items = await page.evaluate(() => {
-   const itemNodes = document.querySelectorAll('#list > div > div > ul > li');
-   const itemList = [];
+  // Chờ cho dữ liệu được tải hoàn thành
+  await page.waitForSelector("#list > div > div > ul > li");
 
-   itemNodes.forEach((node) => {
-     const name = node.querySelector('div.body > div.info > h2 > a').innerText.trim(); // Thay '.name-selector' bằng CSS selector của tên
-    //  const specialty = node.querySelector('.specialty-selector').innerText.trim(); // Thay '.specialty-selector' bằng CSS selector của chuyên ngành
-    //  const hospital = node.querySelector('.hospital-selector').innerText.trim(); // Thay '.hospital-selector' bằng CSS selector của bệnh viện
+  const items = await page.evaluate(() => {
+    const itemNodes = document.querySelectorAll("#list > div > div > ul > li");
+    const itemList = [];
 
-     itemList.push({ name });
-   });
+    itemNodes.forEach((node) => {
+      const name = node
+        .querySelector("div.body > div.info > h2 > a")
+        .innerText.trim();
+      const degree = node
+        .querySelector("div.body > div.info > dl > dd:nth-child(2) > a")
+        .innerText.trim();
+      const specialty = node
+        .querySelector(
+          "div.body > div.info > dl > dd:nth-child(4) > a:nth-child(1)"
+        )
+        .innerText.trim();
+      const hospital = node
+        .querySelector("div.body > div.info > dl > dd:nth-child(6) > a")
+        .innerText.trim();
+      const desc = node
+        .querySelector("div.body > div.info > div")
+        .innerText.trim();
+      itemList.push({ name, degree, specialty, hospital, desc });
+    });
 
-   return itemList;
- });
+    return itemList;
+  });
 
- console.log(items);
+  console.log(items);
+  const filename = "saved_from_db.csv";
+  const writableStream = fs.createWriteStream(filename);
 
- await browser.close();
+  const columns = ["name", "degree", "specialty", "hospital", "desc"];
+
+  const stringifier = stringify({ header: true, columns: columns });
+
+  stringifier.pipe(writableStream);
+
+  items.forEach((row) => {
+    stringifier.write(row);
+  });
+
+  stringifier.end();
+
+  console.log("Finished writing data");
+
+  await browser.close();
 })();
